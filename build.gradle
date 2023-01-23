@@ -12,8 +12,25 @@ repositories {
 dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter:5.8.1',
             'io.rest-assured:rest-assured:5.3.0',
-            'com.google.code.gson:gson:2.10.1')
+            'com.google.code.gson:gson:2.10.1',
+            'org.projectlombok:lombok:1.18.22')
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    testCompileOnly(
+            "org.projectlombok:lombok:1.18.24"
+    )
+
+    testAnnotationProcessor(
+            "org.projectlombok:lombok:1.18.24"
+    )
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+compileTestJava {
+    options.encoding = "UTF-8"
 }
 
 test {
