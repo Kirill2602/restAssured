@@ -19,7 +19,7 @@ public class Specs {
             .log().body()
             .filter(withCustomTemplates())
             .contentType(JSON)
-            .baseUri("https://reqres.in")
+            .baseUri(System.getProperty("baseUrl", "https://reqres.in"))
             .basePath("/api");
 
     public static ResponseSpecification responseSpec(int statusCode) {
