@@ -36,8 +36,7 @@ dependencies {
             'org.projectlombok:lombok:1.18.22',
             "io.qameta.allure:allure-rest-assured:$allureVersion",
             "org.assertj:assertj-core:$assertJVersion",
-            "org.slf4j:slf4j-simple:$slf4jVersion",
-            'com.codeborne:selenide:6.11.2'
+            "org.slf4j:slf4j-simple:$slf4jVersion"
     )
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
