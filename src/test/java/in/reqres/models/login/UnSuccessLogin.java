@@ -2,7 +2,6 @@ package in.reqres.models.login;
 
 import lombok.Getter;
 
-@Getter
-public class UnSuccessLogin {
+public @Getter class UnSuccessLogin {
     private String error;
 }

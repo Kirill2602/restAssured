@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.10.0'
 }
 
 group 'org.example'
@@ -8,12 +9,36 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+def allureVersion = "2.19.0",
+    assertJVersion = "3.23.1",
+    slf4jVersion = "1.7.32"
+
+allure {
+    report {
+        version.set(allureVersion)
+    }
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            junit5 {
+                adapterVersion.set(allureVersion)
+            }
+        }
+    }
+}
+
 
 dependencies {
-    testImplementation('org.junit.jupiter:junit-jupiter:5.8.1',
+    testImplementation(
+            'org.junit.jupiter:junit-jupiter:5.8.1',
             'io.rest-assured:rest-assured:5.3.0',
             'com.google.code.gson:gson:2.10.1',
-            'org.projectlombok:lombok:1.18.22')
+            'org.projectlombok:lombok:1.18.22',
+            "io.qameta.allure:allure-rest-assured:$allureVersion",
+            "org.assertj:assertj-core:$assertJVersion",
+            "org.slf4j:slf4j-simple:$slf4jVersion",
+            'com.codeborne:selenide:6.11.2'
+    )
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
     testCompileOnly(
@@ -34,5 +59,6 @@ compileTestJava {
 }
 
 test {
+    systemProperties(System.getProperties())
     useJUnitPlatform()
 }

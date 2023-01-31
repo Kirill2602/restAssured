@@ -5,11 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@RequiredArgsConstructor
 
-public class Login {
+public @AllArgsConstructor
+@NoArgsConstructor
+@RequiredArgsConstructor class Login {
     @NonNull
     private String email;
     private String password;

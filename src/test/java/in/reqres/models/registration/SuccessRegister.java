@@ -3,9 +3,8 @@ package in.reqres.models.registration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
-@Getter
-public class SuccessRegister {
+public @AllArgsConstructor
+@Getter class SuccessRegister {
     private Integer id;
     private String token;
 }

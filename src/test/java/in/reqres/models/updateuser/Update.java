@@ -2,8 +2,7 @@ package in.reqres.models.updateuser;
 
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
-public class Update {
+public @AllArgsConstructor class Update {
     private String name;
     private String job;
 }

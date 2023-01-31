@@ -1,4 +1,4 @@
-package in.reqres;
+package in.reqres.tests;
 
 import in.reqres.models.login.Login;
 import in.reqres.models.login.SuccessLogin;
@@ -9,11 +9,13 @@ import in.reqres.models.registration.UnSuccessRegister;
 import in.reqres.models.updateuser.Update;
 import in.reqres.models.updateuser.UpdateUser;
 import in.reqres.models.userdata.UserData;
+import in.reqres.specs.Specs;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static in.reqres.endpoints.EndPoints.*;
+import static in.reqres.specs.Specs.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasKey;
@@ -25,12 +27,11 @@ public class RestTests {
 
     @Test
     public void checkAvatarsAndEmailTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseOK200());
-        List<UserData> users = given()
+        List<UserData> users = given(requestSpec)
                 .when()
                 .get(GET_USERS_LIST_ENDPOINT, pageNumber)
                 .then()
-                .log().all()
+                .spec(responseSpec(200))
                 .extract().body().jsonPath().getList("data", UserData.class);
 
         users.forEach(user -> assertTrue(user.getAvatar().contains(user.getId().toString())));
@@ -42,15 +43,15 @@ public class RestTests {
 
     @Test
     public void successRegisterTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseOK200());
         Register user = new Register("eve.holt@reqres.in", "pistol");
         String token = "QpwL5tke4Pnpja7X4";
         int id = 4;
 
-        SuccessRegister successRegister = given()
+        SuccessRegister successRegister = given(requestSpec)
                 .body(user)
                 .post(REGISTRATION_ENDPOINT)
-                .then().log().all()
+                .then()
+                .spec(responseSpec(200))
                 .extract().as(SuccessRegister.class);
 
         assertFalse(successRegister.getToken().isEmpty());
@@ -60,76 +61,76 @@ public class RestTests {
     }
 
     @Test
-    public void unSuccessRegisterTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseError400());
-        Register user = new Register("sydney@fife", "");
-        UnSuccessRegister unSuccessRegister = given()
-                .body(user)
-                .post(REGISTRATION_ENDPOINT)
-                .then().log().all()
-                .extract().as(UnSuccessRegister.class);
-
-        assertEquals("Missing password", unSuccessRegister.getError());
-    }
-
-    @Test
-    public void deleteUserTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseSpecUniqueStatus(204));
-        given()
-                .when()
-                .delete(DELETE_USER_ENDPOINT, userId)
-                .then().log().all();
-    }
-
-    @Test
     public void updateUserTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseOK200());
         Update updateData = new Update("morpheus", "zion resident");
-        UpdateUser updateUser = given()
+        UpdateUser updateUser = given(requestSpec)
                 .body(updateData)
                 .put(UPDATE_USER_ENDPOINT, userId)
-                .then().log().all()
+                .then()
+                .spec(responseSpec(200))
                 .extract().as(UpdateUser.class);
         assertNotNull(updateUser.getUpdatedAt());
     }
 
     @Test
     public void successLoginTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseOK200());
         Login user = new Login("eve.holt@reqres.in", "cityslicka");
-        SuccessLogin successfulAuthorization = given()
+        SuccessLogin successfulAuthorization = given(requestSpec)
                 .body(user)
                 .post(LOGIN_ENDPOINT)
-                .then().log().all()
+                .then()
+                .spec(responseSpec(200))
                 .extract().as(SuccessLogin.class);
 
         assertFalse(successfulAuthorization.getToken().isEmpty());
     }
 
     @Test
+    public void resourcesListWithGrooveTest() {
+        given(requestSpec)
+                .when()
+                .get(RESOURCES_ENDPOINT)
+                .then()
+                .spec(responseSpec(200))
+                .body("data.findAll{it.id == 1}.name", hasItem("cerulean"))
+                .body("data.findAll{it.id == 4}.color", hasItem("#7BC4C4"))
+                .body("data.findAll{it.id == 6}.year", hasItem(2005))
+                .body("support", hasKey("url"))
+                .body("support", hasKey("text"));
+    }
+
+    @Test
+    public void unSuccessRegisterTest() {
+        Register user = new Register("sydney@fife", "");
+        UnSuccessRegister unSuccessRegister = given(requestSpec)
+                .body(user)
+                .post(REGISTRATION_ENDPOINT)
+                .then()
+                .spec(responseSpec(400))
+                .extract().as(UnSuccessRegister.class);
+
+        assertEquals("Missing password", unSuccessRegister.getError());
+    }
+
+    @Test
     public void unSuccessLoginTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseError400());
         Login user = new Login("peter@klaven");
-        UnSuccessLogin unsuccessfulAuthorization = given()
+        UnSuccessLogin unsuccessfulAuthorization = given(requestSpec)
                 .body(user)
                 .post(LOGIN_ENDPOINT)
-                .then().log().all()
+                .then()
+                .spec(responseSpec(400))
                 .extract().as(UnSuccessLogin.class);
 
         assertEquals("Missing password", unsuccessfulAuthorization.getError());
     }
 
     @Test
-    public void resourcesListWithGrooveTest() {
-        Specs.installSpecification(Specs.request(BASE_URL), Specs.responseOK200());
-        given()
+    public void deleteUserTest() {
+        given(requestSpec)
                 .when()
-                .get(RESOURCES_ENDPOINT)
-                .then().log().body()
-                .body("data.findAll{it.id == 1}.name", hasItem("cerulean"))
-                .body("data.findAll{it.id == 4}.color", hasItem("#7BC4C4"))
-                .body("data.findAll{it.id == 6}.year", hasItem(2005))
-                .body("support", hasKey("url"))
-                .body("support", hasKey("text"));
+                .delete(DELETE_USER_ENDPOINT, userId)
+                .then()
+                .spec(responseSpec(204));
     }
 }
