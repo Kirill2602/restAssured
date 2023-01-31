@@ -9,13 +9,13 @@ import in.reqres.models.registration.UnSuccessRegister;
 import in.reqres.models.updateuser.Update;
 import in.reqres.models.updateuser.UpdateUser;
 import in.reqres.models.userdata.UserData;
-import in.reqres.specs.Specs;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static in.reqres.endpoints.EndPoints.*;
-import static in.reqres.specs.Specs.*;
+import static in.reqres.specs.Specs.requestSpec;
+import static in.reqres.specs.Specs.responseSpec;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasKey;
